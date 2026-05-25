@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Flask</title>
+    <style>
+        #calculator {
+            width: 220px;
+            margin: 50px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        #etapas {
+            width: 90%;
+            height: 35px;
+            font-size: 18px;
+            text-align: right;
+            margin-bottom: 10px;
+            padding-right: 5px;
+        }
+        input[type="button"] {
+            width: 45px;
+            height: 40px;
+            font-size: 16px;
+            margin: 2px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="calculator">
+        <form id="calcForm">
+            <input type="text" id="etapas" placeholder="0" readonly><br>
+            
+            <input type="button" value="1" onclick="adicionarCaractere('1')">
+            <input type="button" value="2" onclick="adicionarCaractere('2')">
+            <input type="button" value="3" onclick="adicionarCaractere('3')">
+            <input type="button" value="+" onclick="adicionarCaractere(' + ')">
+            <br>
+            <input type="button" value="4" onclick="adicionarCaractere('4')">
+            <input type="button" value="5" onclick="adicionarCaractere('5')">
+            <input type="button" value="6" onclick="adicionarCaractere('6')">
+            <input type="button" value="-" onclick="adicionarCaractere(' - ')">
+            <br>
+            <input type="button" value="7" onclick="adicionarCaractere('7')">
+            <input type="button" value="8" onclick="adicionarCaractere('8')">
+            <input type="button" value="9" onclick="adicionarCaractere('9')">
+            <input type="button" value="*" onclick="adicionarCaractere(' * ')">
+            <br>
+            <input type="button" value="0" onclick="adicionarCaractere('0')">
+            <input type="button" value="/" onclick="adicionarCaractere(' / ')">
+            <input type="button" value="=" onclick="enviarParaValidacao()">
+            <input type="button" value="C" onclick="limparVisor()">
+        </form>
+    </div>
+
+    <script>
+        const visor = document.getElementById("etapas");
+
+        function adicionarCaractere(caractere) {
+            visor.value += caractere;
+        }
+
+        function limparVisor() {
+            visor.value = "";
+        }
+
+        function enviarParaValidacao() {
+            const expressaoAtual = visor.value;
+
+            if (!expressaoAtual) return;
+
+            fetch('/calcular', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ expressao: expressaoAtual })
+            })
+            .then(response => response.json())
+            .then(dados => {
+                visor.value = dados.resultado;
+            })
+            .catch(() => {
+                visor.value = "Erro";
+            });
+        }
+    </script>
+
+</body>
+</html>
